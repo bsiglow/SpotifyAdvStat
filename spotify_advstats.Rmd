@@ -14,8 +14,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 
 library(tidyverse)
-getwd()
-setwd("C://Users//Ben Siglow//Documents//Courses//Bonus code//SpotifyAsvStat")
+# getwd()
+# setwd("C://Users//Ben Siglow//Documents//Courses//Bonus code//SpotifyAsvStat")
 data <-  read_csv('https://raw.githubusercontent.com/bsiglow/SpotifyAdvStat/master/data.csv')
 artist <-  read_csv('https://raw.githubusercontent.com/bsiglow/SpotifyAdvStat/master/data_by_artist.csv')
 genres <- read_csv('https://raw.githubusercontent.com/bsiglow/SpotifyAdvStat/master/data_by_genres.csv')
