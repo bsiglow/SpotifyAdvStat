@@ -12,6 +12,9 @@ knitr::opts_chunk$set(echo = TRUE)
 # Spotify Stats Project
 ### Ben Siglow, Ethan Gruis, Shiv Patel
 
+# 1) an explanation of your data source (where you got it, why it is interesting, etc.) -- you do not need to print your data within this document
+* **Answer:** Our dataset is the Spotify dataset that can be found on Kaggle. It is interesting because it contains lots of different statistics on music that one normally wouldn't have access to. 
+
 ```{r Load Data}
 library(tidyverse)
 # getwd()
@@ -22,6 +25,16 @@ genres <- read_csv('https://raw.githubusercontent.com/bsiglow/SpotifyAdvStat/mas
 year <- read_csv('https://raw.githubusercontent.com/bsiglow/SpotifyAdvStat/master/data_by_year.csv')
 plug <-  read_csv('https://raw.githubusercontent.com/bsiglow/SpotifyAdvStat/master/data_w_genres.csv')
 ```
+# 2) Your Questions / Hypotheses
+# Hypothesis 
+* H_1: Loudness and duration are much better at explaining variance in popularity in punk music as compared to non-punk music. 
+* H_0: Loudness and duration are not better at explaining variance in popularity in punk music as compared to non-punk music 
+
+* Additionally, one major question we have is if the average profile for a punk genre is significantly different than the average profile of every other genre.
+* We are disucssing this question at the end because we were concerned this data analysis would affect our hypothesis decisions
+
+
+# Initial Exploration
 
 # Create Punk and Not Punk DataFrames
 ```{r Filtering Genres}
@@ -33,17 +46,11 @@ not_punk <- genres %>%
   filter(!str_detect(genres, "punk"))
 ```
 
-# Initial Exploration
+
 ```{r Head Explore}
 head(punk)
 
 head(not_punk)
-```
-
-```{r Unique Genres}
-unique(punk$genres)
-
-# unique(not_punk$genres)
 ```
 
 ```{r Punk Avg}
@@ -80,7 +87,10 @@ not_punk_avg <- data.frame(
 head(not_punk_avg)
 ```
 # Convert Duration
-```{r Duration Conversion}
+```{r}
+punk$duration <- punk$duration_ms * (1.667 * 10^(-5))
+not_punk$duration <- not_punk$duration_ms * (1.667 * 10^(-5))
+
 punk_avg$duration <- punk_avg$duration * (1.667 * 10^(-5))
 not_punk_avg$duration <- not_punk_avg$duration * (1.667 * 10^(-5))
 
@@ -88,17 +98,65 @@ not_punk_avg$duration <- not_punk_avg$duration * (1.667 * 10^(-5))
 
 # Gathering Average DFs
 ```{r Gather Punk}
-punk_acg2 <- gather(punk_avg, key = Attribute, value = Average, na.rm = FALSE,
+punk_avg <- gather(punk_avg, key = Attribute, value = Average, na.rm = FALSE,
   convert = FALSE, factor_key = FALSE)
-punk_acg2
+punk_avg
 ```
 ```{r Gather Not-Punk}
-not_punk_acg <- gather(not_punk_avg, key = Attribute, value = Average, na.rm = F, convert = F, factor_key = F)
-not_punk_acg
+not_punk_avg <- gather(not_punk_avg, key = Attribute, value = Average, na.rm = F, convert = F, factor_key = F)
+not_punk_avg
 ```
+# Visualization 
+
+### Distribution of popularity 
+```{r}
+
+```
+
+### Loudness v. Popularity 
+```{r}
+
+```
+
+### Duration v. Popularity 
+```{r}
+
+```
+
+
+
 # Modeling
+```{r}
+# Linear Regression  - Punk
+punk_lm <- lm(popularity ~ duration + loudness, data = punk)
+
+summary(punk_lm)
+```
+
+```{r}
+# Linear Regression - Not Punk
+not_punk_lm <- lm(popularity ~ duration + loudness, data = not_punk)
+
+summary(not_punk_lm)
+```
+
+### Post-Hoc Power Analysis for Punk & Non-Punk
+```{r Power Test}
+# Punk Analysis
+library(pwr)
+
+punk_test <- pwr.f2.test(u = 2, v = 73, f2 = .1631 / (1-.1631), power = NULL)
+punk_test
+
+# Non-Punk Analysis
+non_punk_test <- pwr.f2.test(u = 2, v = 2585, f2 = .2036 / (1-.2036), power = NULL)
+non_punk_test
+```
+Very cool, this means we had enough observations!
+
+
 ```{r Generate Punk / Not Punk Indicator for Mixed Model}
-genres <- genres %>% mutate(is_punk = ifelse(genres == 'punk', 1, 0))
+genres <- genres %>% mutate(is_punk = ifelse(str_detect(genres, "punk"), 1, 0))
 ```
 
 ```{r}
