@@ -69,7 +69,7 @@ head(punk_avg_att)
 
 
 ```{r}
-punk_avg_att$duration <- punk_avg_att$duration/(1.667 * 10^(-5))
+punk_avg_att$duration <- punk_avg_att$duration * (1.667 * 10^(-5))
 
 ```
 
