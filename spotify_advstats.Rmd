@@ -1,6 +1,6 @@
 ---
 title: "Dream Team Assignment2"
-author: "Benjamin Siglow"
+author: "Benjamin Siglow, Ethan Gruis, Shiv Patel"
 date: "11/13/2020"
 output: html_document
 ---
@@ -9,10 +9,10 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# Spotify Stats Project
+### Ben Siglow, Ethan Gruis, Shiv Patel
 
-```{r}
-
+```{r Load Data}
 library(tidyverse)
 # getwd()
 # setwd("C://Users//Ben Siglow//Documents//Courses//Bonus code//SpotifyAsvStat")
@@ -23,36 +23,32 @@ year <- read_csv('https://raw.githubusercontent.com/bsiglow/SpotifyAdvStat/maste
 plug <-  read_csv('https://raw.githubusercontent.com/bsiglow/SpotifyAdvStat/master/data_w_genres.csv')
 ```
 
-```{r}
-head(data)
-head(artist)
-head(genres)
-```
-
-```{r}
-unique(genres$genres)
-```
-
-```{r}
-str(genres)
-```
-
-```{r}
+# Create Punk and Not Punk DataFrames
+```{r Filtering Genres}
 library(tidyverse)
 punk <- genres %>%
   filter(str_detect(genres, "punk"))
+
+not_punk <- genres %>%
+  filter(!str_detect(genres, "punk"))
 ```
 
-```{r}
+# Initial Exploration
+```{r Head Explore}
 head(punk)
+
+head(not_punk)
 ```
 
-```{r}
+```{r Unique Genres}
 unique(punk$genres)
+
+# unique(not_punk$genres)
 ```
-# Everything below was an attempt at creating a profile bar chart which did not work. 
-```{r}
-punk_avg_att <- data.frame(
+
+```{r Punk Avg}
+# Create punk averages dataframe
+punk_avg <- data.frame(
   accousticness = mean(punk$acousticness),
   danceability = mean(punk$danceability),
   duration = mean(punk$duration_ms),
@@ -67,27 +63,54 @@ punk_avg_att <- data.frame(
 head(punk_avg_att)
 ```
 
-
-```{r}
-punk_avg_att$duration <- punk_avg_att$duration * (1.667 * 10^(-5))
+```{r Not Punk Avg}
+# Create not-punk averages dataframe
+not_punk_avg <- data.frame(
+  accousticness = mean(not_punk$acousticness),
+  danceability = mean(not_punk$danceability),
+  duration = mean(not_punk$duration_ms),
+  energy = mean(not_punk$energy),
+  instrumentalness = mean(not_punk$instrumentalness),
+  liveness = mean(not_punk$liveness),
+  loudness = mean(not_punk$loudness),
+  speechiness = mean(not_punk$speechiness),
+  tempo = mean(not_punk$tempo),
+  valence = mean(not_punk$valence),
+  popularity = mean(not_punk$popularity))
+head(not_punk_avg)
+```
+# Convert Duration
+```{r Duration Conversion}
+punk_avg$duration <- punk_avg$duration * (1.667 * 10^(-5))
+not_punk_avg$duration <- not_punk_avg$duration * (1.667 * 10^(-5))
 
 ```
 
-```{r}
-punk_avg_att
-punk_acg2 <- gather(punk_avg_att, key = Attribute, value = Average, na.rm = FALSE,
+# Gathering Average DFs
+```{r Gather Punk}
+punk_acg2 <- gather(punk_avg, key = Attribute, value = Average, na.rm = FALSE,
   convert = FALSE, factor_key = FALSE)
+punk_acg2
 ```
+```{r Gather Not-Punk}
+not_punk_acg <- gather(not_punk_avg, key = Attribute, value = Average, na.rm = F, convert = F, factor_key = F)
+not_punk_acg
+```
+# Modeling
+```{r Generate Punk / Not Punk Indicator for Mixed Model}
+genres <- genres %>% mutate(is_punk = ifelse(genres == 'punk', 1, 0))
+```
+
 ```{r}
-acg_punkbar <- ggplot(data = punk_acg2, aes(x = Attribute, y = Average )) +
-  geom_bar(stat = 'identity' , fill = 'blue')
-acg_punkbar
+library(lme4) 
+popularityMixedModel <- lmer(popularity ~ acousticness + 
+                             danceability + (loudness | is_punk),
+                             data = genres)
+
+summary(popularityMixedModel)
 ```
 
 
-```{r}
-str(punk_avg_att)
-```
 
 
 
