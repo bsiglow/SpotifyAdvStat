@@ -323,7 +323,7 @@ not_punk_b1 <- punk_avg[-c(9,11),]
 
 
 not_punk_bar <-  ggplot(data = not_punk_b1, aes(x = Attribute, y = Average)) +
-  geom_bar(stat = 'identity', fill = 'darkolivegreen2', color = 'black') +
+  geom_bar(stat = 'identity', fill = 'darkred', color = 'black') +
   theme_minimal() +
   labs(title = 'Not Punk Genre Profile 1') 
 
@@ -332,7 +332,7 @@ not_punk_bar
 not_punk_b2 <-  punk_avg[c(9,11),]
 
 not_punk_bar2 <-  ggplot(data = not_punk_b2, aes(x = Attribute, y = Average)) +
-  geom_bar(stat = 'identity', fill = 'darkolivegreen2', color = 'black') +
+  geom_bar(stat = 'identity', fill = 'darkred', color = 'black') +
   theme_minimal() +
   labs(title = 'Not Punk Genre Profile 2') 
 
@@ -340,6 +340,8 @@ not_punk_bar2
 ```
 
 
-**Why Do Our Results Matter:**
-**Answer**
+**Why Do Our Results Matter**
+
+**Answer:**
+
 * The biggest take away we have found from this is when reviewing genres there is so many subsets the averages end up evening out when reviewing a single genre like punk against the overall music. This project was a good example of how abstract music genre specification is. The origination of punk via the Ramones and many others was based on high tempo, basic cords, and short duration. As we see now those attributes have evolved with the genre. In reviewing of the genres we deemed as punk there were over 70 subcategories. The complexity of what people enjoy in addition to what makes a specific genre is complex. This complexity requires more then these current values used to measure within our data. Alternative methods would need to be used to first define what exactly makes punk music. In the beginning of this project we believed working at the genre level would be realistic in defining the differences in punk vs. other music. This was shown on multiple levels to be untrue. There needs to be deeper values to truly define what makes specific genre popularity to succeed. If this topic were revisited we would need to dig deeper in defining some main genres and go to the music level to define them. In addition location and sentiment may be major additions to help review the attributes of music. Finally, this was an important realization there is much more complexity in the enjoyment of music. Popularity and most other attributes between the data frames we made are very close. It is possible there is some social influence in this for example the poor economic status that was occuring in the UK when one of the major UK punk movements began. More than song metrics are required to define the taste of a population and these external attributes need further investigation. 
