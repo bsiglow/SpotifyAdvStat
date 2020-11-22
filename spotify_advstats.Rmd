@@ -9,10 +9,10 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Spotify Stats Project
-### Ben Siglow, Ethan Gruis, Shiv Patel
+### Spotify Stats Project
+##### Ben Siglow, Ethan Gruis, Shiv Patel
 
-# 1) an explanation of your data source (where you got it, why it is interesting, etc.) -- you do not need to print your data within this document
+### 1) An explanation of your data source (where you got it, why it is interesting, etc.) -- you do not need to print your data within this document
 * **Answer:** Our dataset is the Spotify dataset that can be found on Kaggle. It is interesting because it contains lots of different statistics on music that one normally wouldn't have access to. 
 
 ```{r Load Data}
@@ -27,8 +27,9 @@ plug <-  read_csv('https://raw.githubusercontent.com/bsiglow/SpotifyAdvStat/mast
 ```
 
 
-# 2) Your Questions / Hypotheses
-# Hypothesis 
+### 2) Your Questions / Hypotheses
+### Hypothesis 
+
 * H_1: Loudness and duration are much better at explaining variance in popularity in punk music as compared to non-punk music. 
 * H_0: Loudness and duration are not better at explaining variance in popularity in punk music as compared to non-punk music 
 
@@ -37,9 +38,9 @@ plug <-  read_csv('https://raw.githubusercontent.com/bsiglow/SpotifyAdvStat/mast
 
 
 
-# Initial Exploration
+### Initial Exploration & Wrangling
 
-# Create Punk and Not Punk DataFrames
+### Create Punk and Not Punk DataFrames
 ```{r Filtering Genres}
 library(tidyverse)
 punk <- genres %>%
@@ -55,12 +56,12 @@ head(punk)
 
 head(not_punk)
 ```
-# Creating a new column specifically for minute duration. This will be needed for use in later models to allow a closer range in attributes. 
+* Creating a new column specifically for minute duration. This will be needed for use in later models to allow a closer range in attributes. 
 ```{r}
-genres$duration_min <- genres$duration_ms * (1.667 * 10*(-5))
+genres$duration_min <- genres$duration_ms * (1.667 * 10^(-5))
 ```
 
-# Creating the average attribute data frame for punk to be used in creating the bar chart showing the Punk song attribute breakdown. 
+* Creating the average attribute data frame for punk to be used in creating the bar chart showing the Punk song attribute breakdown. 
 ```{r Punk Avg}
 # Create punk averages dataframe
 punk_avg <- data.frame(
@@ -76,7 +77,8 @@ punk_avg <- data.frame(
   valence = mean(punk$valence),
   popularity = mean(punk$popularity))
 ```
-# Creating the average attribute data frame for punk to be used in creating the bar chart showing the non-Punk song attribute breakdown. 
+
+* Creating the average attribute data frame for punk to be used in creating the bar chart showing the non-Punk song attribute breakdown. 
 ```{r Not Punk Avg}
 # Create not-punk averages dataframe
 not_punk_avg <- data.frame(
@@ -93,9 +95,11 @@ not_punk_avg <- data.frame(
   popularity = mean(not_punk$popularity))
 head(not_punk_avg)
 ```
-# Convert Duration
-## Converting the time duration for individual data frames. 
-```{r}
+
+##### Convert Duration
+* Converting the time duration for individual data frames. 
+```{r Convert Durations}
+# Is this still necessary?
 punk$duration <- punk$duration_ms * (1.667 * 10^(-5))
 not_punk$duration <- not_punk$duration_ms * (1.667 * 10^(-5))
 
@@ -106,8 +110,8 @@ not_punk_avg$duration <- not_punk_avg$duration * (1.667 * 10^(-5))
 
 ```
 
-# Gathering Average DFs
-## Gathering for later plots
+#### Gathering Average DFs
+* Gathering for later plots
 ```{r Gather Punk}
 punk_avg <- gather(punk_avg, key = Attribute, value = Average, na.rm = FALSE,
   convert = FALSE, factor_key = FALSE)
@@ -117,46 +121,113 @@ punk_avg
 not_punk_avg <- gather(not_punk_avg, key = Attribute, value = Average, na.rm = F, convert = F, factor_key = F)
 not_punk_avg
 ```
-# Visualization 
+## Visuals
 
-### Distribution of popularity 
-```{r}
-
+#### Distribution of popularity 
+```{r Distribution of Popularity}
+library(ggplot2)
+popDist <- ggplot(data = genres, aes(x = popularity)) + 
+  geom_histogram(fill = 'lightGrey', color = 'black') +
+  theme_minimal()
+popDist
 ```
 
-### Loudness v. Popularity 
-```{r}
+* This distribution looks pretty good, relatively normal except for the tial at 0 (most likely caused by people not listening to certain music e.g. Pop Punk Italiano)
 
+### Overall Loudness v. Popularity 
+```{r Loud v. Popularity: General}
+loudVpop <- ggplot(data = genres, aes(x = loudness, y = popularity, alpha = .45)) +
+  geom_point() +
+  theme_minimal()
+
+loudVpop
 ```
+
+* This graph seems kinda off at first glance given the x-axis, but it is still a slight positive relationship between loudness and popularity. Meaning that as loundess increases, popularity increases.
 
 ### Duration v. Popularity 
-```{r}
+```{r Duration v. Populairty: General}
+durVpop <- ggplot(data = genres, aes(x = duration_min, y = popularity, alpha = .45)) + 
+  geom_point() + 
+  theme_minimal()
 
+durVpop
 ```
 
+* This graph is not useful; there are a lot of songs around the 2-5 minute range that are clogging this graph up significantly, and its hard to identify any meaningful relationship.
 
+### Punk v Non-Punk Visuals
+```{r Loudness v. Popularity: Punk}
+punkLoudPop <- ggplot(data = punk, aes(x = loudness, y = popularity)) + 
+  geom_point() +
+  geom_smooth(method='lm', color = 'red', se = F) +
+  theme_minimal() +
+  labs(title = 'Punk: Loudness v. Popularity')
 
-# Modeling
-```{r}
-# Linear Regression  - Punk
+punkLoudPop
+```
+
+* As we might have expected, there is a general positive relationship between loudness and popularity.
+
+```{r Loud v. Popularity: Non-Punk}
+notpunkLoudPop <- ggplot(data = not_punk, aes(x = loudness, y = popularity)) + 
+  geom_point() +
+  geom_smooth(method='lm', color = 'red', se = F) +
+  theme_minimal() +
+  labs(title = 'Not Punk: Loudness v. Popularity')
+
+notpunkLoudPop
+```
+
+* This is certainly interesting, as the loudness vs popularity relationship in non-punk music seems much stronger than the punk relationship we visualized in the last figure. May be significant, may be due to number of observations.
+
+```{r Duration v. Popularity: Punk}
+punkDurPop <- ggplot(data = punk, aes(x = duration, y = popularity)) + 
+  geom_point() +
+  geom_smooth(method='lm', color = 'red', se = F) +
+  theme_minimal() +
+  labs(title = 'Punk: Duration v. Popularity')
+
+punkDurPop
+```
+
+* Duration has a slight positive relationship with popularity in punk music? Which seems... off. The number of observations here may be cause for concern, particularly some of those outliers at the top there.
+
+```{r Duration v. Popularity: Non-Punk}
+notpunkDurPop <- ggplot(data = not_punk, aes(x = duration, y = popularity, alpha = .45)) + 
+  geom_point() +
+  geom_smooth(method='lm', color = 'red', se = F) +
+  theme_minimal() +
+  labs(title = 'Not Punk: Duration v. Popularity')
+
+notpunkDurPop
+```
+
+* As one might expect, there is essentially no relationship between duration and popularity in the rest of music (non-punk).
+
+# Analysis, Modeling, and Results:
+## Modeling
+```{r Punk LM}
+# Linear Regression - Punk
 punk_lm <- lm(popularity ~ duration + loudness, data = punk)
 
 summary(punk_lm)
 ```
 
-```{r}
+```{r Non Punk LM}
 # Linear Regression - Not Punk
 not_punk_lm <- lm(popularity ~ duration + loudness, data = not_punk)
 
 summary(not_punk_lm)
 ```
 
-# Result Review.
-## The initial thing we see from these two models is the diffeence in Adjusted Rsquared. In the model of non punk we see the loudness and duration are explaiing 20% of the varience of popularity in the punk model. This is important for to future insights. The first being are we causing a power issue with how fewer genres fall into our punk model vs. that of non_punk. This will be reviewied with a later post_hoc to confirm we can follow these resukts.
+## Result Review.
+* The initial thing we see from these two models is the difference in Adjusted Rsquared. In the model of non punk we see the loudness and duration are explaining 20% of the variance of popularity in the punk model. This is important for to future insights. The first being are we causing a power issue with how fewer genres fall into our punk model vs. that of non_punk. This will be reviewed with a later post_hoc to confirm we can follow these results.
 
-## The next place we review is our actual coefficents. In both data sets each coefficient was significant, with the non-punk data set showing ,uch better p values. The major take away from this is that in support of our hypothesis the loudness has a lower coefficent supporting popularity, but duration actually has a larger coefficient than that of the non-punk data set. This goes away from our initial beleif in that traditional punk is expected to be a short song. Th e coefficient is actually positive. So as duration increases the popularity is expecte going up. SO aparently the punk community actually prefer longer songs. 
+* The next place we review is our actual coefficients. In both data sets each coefficient was significant, with the non-punk data set showing such better p values. The major take away from this is that in support of our hypothesis the loudness has a lower coefficient supporting popularity, but duration actually has a larger coefficient than that of the non-punk data set. This goes away from our initial belief in that traditional punk is expected to be a short song. Th e coefficient is actually positive. So as duration increases the popularity is expect going up. SO apparently the punk community actually prefer longer songs. 
 
-## Through these results we will need to fail to reject our null hypothesis. The coefficient four loudness is not a larger factor for popularity and though sound is a bigger predictor it is actually increasing the popularity with longer duration. 
+* Through these results we will need to fail to reject our null hypothesis. The coefficient four loudness is not a larger factor for popularity and though sound is a bigger predictor it is actually increasing the popularity with longer duration. 
+
 ### Post-Hoc Power Analysis for Punk & Non-Punk
 ```{r Power Test}
 # Punk Analysis
@@ -169,17 +240,19 @@ punk_test
 non_punk_test <- pwr.f2.test(u = 2, v = 2585, f2 = .2036 / (1-.2036), power = NULL)
 non_punk_test
 ```
-## To further support our above results review we can confirm with the power analysis we do have enough ibseervations to suppoort our findings. 
+To further support our above results review we can confirm with the power analysis we do have enough ibseervations to suppoort our findings. 
 
 
-# In a look to  how the loudness may be different based on a mixed model we formated levels of punk or not punk music. 
+In a look to  how the loudness may be different based on a mixed model we formated levels of punk or not punk music. 
 ```{r Generate Punk / Not Punk Indicator for Mixed Model}
 genres <- genres %>% mutate(is_punk = ifelse(str_detect(genres, "punk"), 1, 0))
 ```
 
 
-# With the levels formed we created a mixed model to look at if the loudness shows some difference between the levels. 
-```{r}
+With the levels formed we created a mixed model to look at if the loudness shows some difference between the levels. 
+
+### Mixed Effects Model
+```{r Mixed Effects Model}
 library(lme4)
 
 popularityMixedModel_loud <- lmer(popularity ~ 
@@ -193,9 +266,10 @@ ICC_punk
 
 ```
 
-# This mixed model resulted in a ICC larger thn 0 showing there is some varience however there is not an extreme difference with a result of .4338298 as the ICC. SO again we support their is a difference between the two factors, but based on the previous linear models loudness is actually a bigger attribute for popularity in non-punk mucsic.
+### Mixed Model Results
+* This mixed model resulted in a ICC larger thn 0 showing there is some varience however there is not an extreme difference with a result of .4338298 as the ICC. SO again we support their is a difference between the two factors, but based on the previous linear models loudness is actually a bigger attribute for popularity in non-punk mucsic.
 
-### Seeing as we were explaining very little in our previous linear models we did see there is actuall a lot more to explain the vrience in popularity and wanted to review how the tempo and energy may effect punk music vs. the popularity of non punk music. 
+* Seeing as we were explaining very little in our previous linear models we did see there is actuall a lot more to explain the vrience in popularity and wanted to review how the tempo and energy may effect punk music vs. the popularity of non punk music. 
 
 ```{r}
 # Linear Regression  - Punk
@@ -211,6 +285,10 @@ not_punk_lm_2 <- lm(popularity ~ energy + tempo, data = not_punk)
 summary(not_punk_lm_2)
 ```
 
-## with this second set of models we still are not seeing a big difference when able to say there is a big difference bewtween these attributes among the two models, because the punk model over all is not showing as significant and not showing a lot. 
+**Results & Analysis:**
+* With this second set of models we still are not seeing a big difference when able to say there is a big difference bewtween these attributes among the two models, because the punk model over all is not showing as significant and not showing a lot. 
 
-## MOving forward in how close the avges are for both punk and non-punk if we wanted to explore further what causes a punk track to be popular would need to be explored further with different attributes to get a better feel for the music, because it appears our classical understanding of what makes punk cool is incorrect. I suppose we arent as reblious as we though with our punk rock enjoyment, because we are not seeing huge differences in the average values in our two new data frames. 
+* Moving forward in how close the avges are for both punk and non-punk if we wanted to explore further what causes a punk track to be popular would need to be explored further with different attributes to get a better feel for the music, because it appears our classical understanding of what makes punk cool is incorrect. I suppose we arent as reblious as we though with our punk rock enjoyment, because we are not seeing huge differences in the average values in our two new data frames. 
+
+**Why Do Our Results Matter:**
+Someone write something here
