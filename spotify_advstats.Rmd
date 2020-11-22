@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ##### Ben Siglow, Ethan Gruis, Shiv Patel
 
 ### 1) An explanation of your data source (where you got it, why it is interesting, etc.) -- you do not need to print your data within this document
-* **Answer:** Our dataset is the Spotify dataset that can be found on Kaggle. It is interesting because it contains lots of different statistics on music that one normally wouldn't have access to. 
+* **Answer:** Our dataset is the Spotify dataset that can be found on Kaggle. It is interesting because it contains lots of different statistics on music that one normally wouldn't have access to. Including attributes like popularity, tone and more are great attributes to review in this asignment. 
 
 ```{r Load Data}
 library(tidyverse)
@@ -34,7 +34,7 @@ plug <-  read_csv('https://raw.githubusercontent.com/bsiglow/SpotifyAdvStat/mast
 * H_0: Loudness and duration are not better at explaining variance in popularity in punk music as compared to non-punk music 
 
 * Additionally, one major question we have is if the average profile for a punk genre is significantly different than the average profile of every other genre.
-* We are disucssing this question at the end because we were concerned this data analysis would affect our hypothesis decisions
+* We are discussing this question at the end because we were concerned this data analysis would affect our hypothesis decisions
 
 
 
@@ -78,7 +78,7 @@ punk_avg <- data.frame(
   popularity = mean(punk$popularity))
 ```
 
-* Creating the average attribute data frame for punk to be used in creating the bar chart showing the non-Punk song attribute breakdown. 
+* Creating the average attribute data frame for not-punk to be used in creating the bar chart showing the non-Punk song attribute breakdown. 
 ```{r Not Punk Avg}
 # Create not-punk averages dataframe
 not_punk_avg <- data.frame(
@@ -132,7 +132,7 @@ popDist <- ggplot(data = genres, aes(x = popularity)) +
 popDist
 ```
 
-* This distribution looks pretty good, relatively normal except for the tial at 0 (most likely caused by people not listening to certain music e.g. Pop Punk Italiano)
+* This distribution looks pretty good, relatively normal except for the tale at 0 (most likely caused by people not listening to certain music e.g. Pop Punk Italiano)
 
 ### Overall Loudness v. Popularity 
 ```{r Loud v. Popularity: General}
@@ -143,7 +143,7 @@ loudVpop <- ggplot(data = genres, aes(x = loudness, y = popularity, alpha = .45)
 loudVpop
 ```
 
-* This graph seems kinda off at first glance given the x-axis, but it is still a slight positive relationship between loudness and popularity. Meaning that as loundess increases, popularity increases.
+* This graph seems kinda off at first glance given the x-axis, but it is still a slight positive relationship between loudness and popularity. Meaning that as loudness increases, popularity increases.
 
 ### Duration v. Popularity 
 ```{r Duration v. Populairty: General}
@@ -191,7 +191,7 @@ punkDurPop <- ggplot(data = punk, aes(x = duration, y = popularity)) +
 punkDurPop
 ```
 
-* Duration has a slight positive relationship with popularity in punk music? Which seems... off. The number of observations here may be cause for concern, particularly some of those outliers at the top there.
+* Duration has a slight positive relationship with popularity in punk music? Which seems... off. The number of observations here may be cause for concern, particularly some of those outlines at the top there.
 
 ```{r Duration v. Popularity: Non-Punk}
 notpunkDurPop <- ggplot(data = not_punk, aes(x = duration, y = popularity, alpha = .45)) + 
@@ -222,11 +222,11 @@ summary(not_punk_lm)
 ```
 
 ## Result Review.
-* The initial thing we see from these two models is the difference in Adjusted Rsquared. In the model of non punk we see the loudness and duration are explaining 20% of the variance of popularity in the punk model. This is important for to future insights. The first being are we causing a power issue with how fewer genres fall into our punk model vs. that of non_punk. This will be reviewed with a later post_hoc to confirm we can follow these results.
+* The initial thing we see from these two models is the difference in Adjusted Rsquared. In the model of non punk we see the loudness and duration are explaining 20% of the variance of popularity in the punk model. This is important for to future insights. The first being are we causing a power issue with how fewer genres fall into our punk model vs. that of non_punk. This will be reviewed with a later post_hoc to confirm we can follow these results. In addition we may be missing what attributes are truly driving punk. This may be something due to sentiment and we would need to review such attributes in the future to confirm this case. 
 
-* The next place we review is our actual coefficients. In both data sets each coefficient was significant, with the non-punk data set showing such better p values. The major take away from this is that in support of our hypothesis the loudness has a lower coefficient supporting popularity, but duration actually has a larger coefficient than that of the non-punk data set. This goes away from our initial belief in that traditional punk is expected to be a short song. Th e coefficient is actually positive. So as duration increases the popularity is expect going up. SO apparently the punk community actually prefer longer songs. 
+* The next place we review is our actual coefficients. In both data sets each coefficient was significant, with the non-punk data set showing much better p values. The major take away from this is that in support of our hypothesis the loudness has a lower coefficient supporting popularity, but duration actually has a larger coefficient than that of the non-punk data set. This goes away from our initial belief in that traditional punk is expected to be a short song. The coefficient is actually positive. So as duration increases the popularity is expect going up. So apparently the punk community actually prefer longer songs. This is up to speculation though. As we saw in out graph when reviewing the overall punk genre the leverage of larger outliers may be the real cause for this. 
 
-* Through these results we will need to fail to reject our null hypothesis. The coefficient four loudness is not a larger factor for popularity and though sound is a bigger predictor it is actually increasing the popularity with longer duration. 
+* Through these results we will need to fail to reject our null hypothesis. The coefficient four loudness is not a larger factor for popularity and though sound is a bigger predictor it is actually increasing the popularity with longer duration. Finally these attributes do not explain the varience in punk popularity vs. these attributes in the non_punk data set.  
 
 ### Post-Hoc Power Analysis for Punk & Non-Punk
 ```{r Power Test}
@@ -240,10 +240,10 @@ punk_test
 non_punk_test <- pwr.f2.test(u = 2, v = 2585, f2 = .2036 / (1-.2036), power = NULL)
 non_punk_test
 ```
-To further support our above results review we can confirm with the power analysis we do have enough ibseervations to suppoort our findings. 
+To further support our above results review we can confirm with the power analysis we do have enough obseervations to support our findings. 
 
 
-In a look to  how the loudness may be different based on a mixed model we formated levels of punk or not punk music. 
+In a look to  how the loudness may be different based on a mixed model we formatted levels of punk or not punk music. 
 ```{r Generate Punk / Not Punk Indicator for Mixed Model}
 genres <- genres %>% mutate(is_punk = ifelse(str_detect(genres, "punk"), 1, 0))
 ```
@@ -267,9 +267,9 @@ ICC_punk
 ```
 
 ### Mixed Model Results
-* This mixed model resulted in a ICC larger thn 0 showing there is some varience however there is not an extreme difference with a result of .4338298 as the ICC. SO again we support their is a difference between the two factors, but based on the previous linear models loudness is actually a bigger attribute for popularity in non-punk mucsic.
+* This mixed model resulted in a ICC larger thn 0 showing there is some variance however there is not an extreme difference with a result of .4338298 as the ICC. So again we support their is a difference between the two factors, but based on the previous linear models loudness is actually a bigger attribute for popularity in non-punk music.
 
-* Seeing as we were explaining very little in our previous linear models we did see there is actuall a lot more to explain the vrience in popularity and wanted to review how the tempo and energy may effect punk music vs. the popularity of non punk music. 
+* Seeing as we were explaining very little in our previous linear models we did see there is actually a lot more to explain the variance in popularity and wanted to review how the tempo and energy may effect punk music vs. the popularity of non-punk music. 
 
 ```{r}
 # Linear Regression  - Punk
@@ -286,9 +286,53 @@ summary(not_punk_lm_2)
 ```
 
 **Results & Analysis:**
-* With this second set of models we still are not seeing a big difference when able to say there is a big difference bewtween these attributes among the two models, because the punk model over all is not showing as significant and not showing a lot. 
+* This second set of models is actualy worse at reviewing the difference between the two music data sets. we do not even have a significant model in the punk music linear regression. 
 
-* Moving forward in how close the avges are for both punk and non-punk if we wanted to explore further what causes a punk track to be popular would need to be explored further with different attributes to get a better feel for the music, because it appears our classical understanding of what makes punk cool is incorrect. I suppose we arent as reblious as we though with our punk rock enjoyment, because we are not seeing huge differences in the average values in our two new data frames. 
+* Moving forward in how close the averages are for both punk and non-punk if we wanted to explore further what causes a punk track to be popular would require different attributes to get a better feel for the music, because it appears our classical understanding of what makes punk cool is incorrect. Possible future actions would posibly require some sentiment evaluations. I suppose we are not as rebellious as we though with our punk rock enjoyment, because we are not seeing huge differences in the average values in our two new data frames. This is further shown in the two character graphs that follow. 
+
+```{r}
+punk_b1 <- punk_avg[-c(9,11),] 
+
+
+punk_bar <-  ggplot(data = punk_b1, aes(x = Attribute, y = Average)) +
+  geom_bar(stat = 'identity', fill = 'red')+
+  theme_minimal() +
+  labs(title = 'Punk Genre Profile 1') 
+
+punk_bar
+  
+punk_b2 <-  punk_avg[c(9,11),]
+
+punk_bar2 <-  ggplot(data = punk_b2, aes(x = Attribute, y = Average)) +
+  geom_bar(stat = 'identity', fill = 'red')+
+  theme_minimal() +
+  labs(title = 'Punk Genre Profile 2') 
+
+punk_bar2
+```
+
+```{r}
+not_punk_b1 <- punk_avg[-c(9,11),] 
+
+
+not_punk_bar <-  ggplot(data = not_punk_b1, aes(x = Attribute, y = Average)) +
+  geom_bar(stat = 'identity', fill = 'green')+
+  theme_minimal() +
+  labs(title = 'Not Punk Genre Profile 1') 
+
+not_punk_bar
+  
+not_punk_b2 <-  punk_avg[c(9,11),]
+
+not_punk_bar2 <-  ggplot(data = not_punk_b2, aes(x = Attribute, y = Average)) +
+  geom_bar(stat = 'identity', fill = 'green')+
+  theme_minimal() +
+  labs(title = 'Not Punk Genre Profile 2') 
+
+not_punk_bar2
+```
+
 
 **Why Do Our Results Matter:**
-Someone write something here
+**Answer**
+The biggest take away we have found from this is when reviewing genres there is so many subsets the averages end up evening out when reviewing a single genre like punk against the overall music. This project was a good example of how abstract music genre specification is. The origination of punk via the Ramones and many others was based on high tempo, basic cords, and short duration. As we see now those attributes have evolved with the genre. In reviewing of the genres we deemed as punk there were over 70 subcategories. The complexity of what people enjoy in addition to what makes a specific genre is complex. This complexity requires more then these current values used to measure within our data. Alternative methods would need to be used to first define what exactly makes punk music. In the beginning of this project we believed working at the genre level would be realistic in defining the differences in punk vs. other music. This was shown on multiple levels to be untrue. There needs to be deeper values to truly define what makes specific genre popularity to succeed. If this topic were revisited we would need to dig deeper in defining some main genres and go to the music level to define them. In addition location and sentiment may be major additions to help review the attributes of music. Finally, this was an important realization there is much more complexity in the enjoyment of music. Popularity and most other attributes between the data frames we made are very close. It is possible there is some social influence in this for example the poor economic status that was occuring in the UK when one of the major UK punk movements began. More than song metrics are required to define the taste of a population and these external attributes need further investigation. 
