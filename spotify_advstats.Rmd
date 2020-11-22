@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 * **Answer:** Our dataset is the Spotify dataset that can be found on Kaggle. It is interesting because it contains lots of different statistics on music that one normally wouldn't have access to. Including attributes like popularity, tone and more are great attributes to review in this asignment. 
 
 ```{r Load Data}
+library(data.table)
 library(tidyverse)
 # getwd()
 # setwd("C://Users//Ben Siglow//Documents//Courses//Bonus code//SpotifyAsvStat")
