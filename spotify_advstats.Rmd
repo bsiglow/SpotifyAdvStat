@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 * **Answer:** Our dataset is the Spotify dataset that can be found on Kaggle. It is interesting because it contains lots of different statistics on music that one normally wouldn't have access to. Including attributes like popularity, tone and more are great attributes to review in this asignment. 
 
 ```{r Load Data}
-library(data.table)
+library(ggdark)
 library(tidyverse)
 # getwd()
 # setwd("C://Users//Ben Siglow//Documents//Courses//Bonus code//SpotifyAsvStat")
@@ -124,8 +124,13 @@ not_punk_avg
 ```{r Distribution of Popularity}
 library(ggplot2)
 popDist <- ggplot(data = genres, aes(x = popularity)) + 
-  geom_histogram(fill = 'lightGrey', color = 'black') +
-  theme_minimal()
+  geom_histogram(fill = 'springgreen3', color = 'black') +
+    theme_minimal() +
+  dark_theme_gray() +
+  theme(axis.line.x = element_line(color="white"), 
+        axis.line.y = element_line(color="white")) +
+  labs(title = 'Distribution of Popularity')
+
 popDist
 ```
 
@@ -135,7 +140,10 @@ popDist
 ```{r Loud v. Popularity: General}
 loudVpop <- ggplot(data = genres, aes(x = loudness, y = popularity, alpha = .45)) +
   geom_point() +
-  theme_minimal()
+  geom_smooth(color = 'springgreen3', method = 'lm', se = F) +
+  dark_theme_grey() +
+  theme(axis.line.x = element_line(color="white"), 
+  axis.line.y = element_line(color="white"))
 
 loudVpop
 ```
@@ -145,8 +153,11 @@ loudVpop
 ### Duration v. Popularity 
 ```{r Duration v. Populairty: General}
 durVpop <- ggplot(data = genres, aes(x = duration_min, y = popularity, alpha = .45)) + 
-  geom_point() + 
-  theme_minimal()
+  geom_point(color = 'springgreen3') + 
+  theme_minimal() +
+  dark_theme_grey() +
+  theme(axis.line.x = element_line(color="white"), 
+  axis.line.y = element_line(color="white"))
 
 durVpop
 ```
@@ -157,9 +168,12 @@ durVpop
 ```{r Loudness v. Popularity: Punk}
 punkLoudPop <- ggplot(data = punk, aes(x = loudness, y = popularity)) + 
   geom_point() +
-  geom_smooth(method='lm', color = 'red', se = F) +
+  geom_smooth(method='lm', color = 'springgreen3', se = F) +
   theme_minimal() +
-  labs(title = 'Punk: Loudness v. Popularity')
+  labs(title = 'Punk: Loudness v. Popularity') +
+  dark_theme_gray() +
+  theme(axis.line.x = element_line(color="springgreen3"), 
+  axis.line.y = element_line(color="springgreen3"))
 
 punkLoudPop
 ```
@@ -169,9 +183,12 @@ punkLoudPop
 ```{r Loud v. Popularity: Non-Punk}
 notpunkLoudPop <- ggplot(data = not_punk, aes(x = loudness, y = popularity)) + 
   geom_point() +
-  geom_smooth(method='lm', color = 'red', se = F) +
+  geom_smooth(method='lm', color = 'springgreen3', se = F) +
   theme_minimal() +
-  labs(title = 'Not Punk: Loudness v. Popularity')
+  labs(title = 'Not Punk: Loudness v. Popularity') +
+  dark_theme_gray() +
+  theme(axis.line.x = element_line(color="springgreen3"), 
+  axis.line.y = element_line(color="springgreen3"))
 
 notpunkLoudPop
 ```
@@ -181,9 +198,12 @@ notpunkLoudPop
 ```{r Duration v. Popularity: Punk}
 punkDurPop <- ggplot(data = punk, aes(x = duration, y = popularity)) + 
   geom_point() +
-  geom_smooth(method='lm', color = 'red', se = F) +
+  geom_smooth(method='lm', color = 'springgreen3', se = F) +
   theme_minimal() +
-  labs(title = 'Punk: Duration v. Popularity')
+  labs(title = 'Punk: Duration v. Popularity') +
+  dark_theme_grey() +
+  theme(axis.line.x = element_line(color="springgreen3"), 
+  axis.line.y = element_line(color="springgreen3"))
 
 punkDurPop
 ```
@@ -193,9 +213,12 @@ punkDurPop
 ```{r Duration v. Popularity: Non-Punk}
 notpunkDurPop <- ggplot(data = not_punk, aes(x = duration, y = popularity, alpha = .45)) + 
   geom_point() +
-  geom_smooth(method='lm', color = 'red', se = F) +
+  geom_smooth(method='lm', color = 'springgreen3', se = F) +
   theme_minimal() +
-  labs(title = 'Not Punk: Duration v. Popularity')
+  labs(title = 'Not Punk: Duration v. Popularity') +
+  dark_theme_grey() +
+  theme(axis.line.x = element_line(color="springgreen3"), 
+  axis.line.y = element_line(color="springgreen3"))
 
 notpunkDurPop
 ```
@@ -270,7 +293,9 @@ genres$is_punk <- as.factor(genres$is_punk)
 ggplot(genres, aes(loudness, popularity, 
                               group = is_punk, color = is_punk)) +
   geom_smooth(method = "lm", se = FALSE) +
-  theme_minimal()
+  dark_theme_grey() +
+  theme(axis.line.x = element_line(color="white"), 
+  axis.line.y = element_line(color="white"))
 ```
 
 ### Mixed Model Results
@@ -302,18 +327,24 @@ punk_b1 <- punk_avg[-c(9,11),]
 
 
 punk_bar <-  ggplot(data = punk_b1, aes(x = Attribute, y = Average)) +
-  geom_bar(stat = 'identity', fill = 'darkolivegreen2', color = 'black') +
+  geom_bar(stat = 'identity', fill = 'springgreen3', color = 'black') +
   theme_minimal() +
-  labs(title = 'Punk Genre Profile 1') 
+  labs(title = 'Punk Genre Profile 1') +
+  dark_theme_grey() +
+  theme(axis.line.x = element_line(color="springgreen3"), 
+  axis.line.y = element_line(color="springgreen3"))
 
 punk_bar
   
 punk_b2 <-  punk_avg[c(9,11),]
 
 punk_bar2 <-  ggplot(data = punk_b2, aes(x = Attribute, y = Average)) +
-  geom_bar(stat = 'identity', fill = 'darkolivegreen2', color = 'black') +
+  geom_bar(stat = 'identity', fill = 'springgreen3', color = 'black') +
   theme_minimal() +
-  labs(title = 'Punk Genre Profile 2') 
+  labs(title = 'Punk Genre Profile 2')  +
+  dark_theme_grey() +
+  theme(axis.line.x = element_line(color="springgreen3"), 
+  axis.line.y = element_line(color="springgreen3"))
 
 punk_bar2
 ```
@@ -323,18 +354,24 @@ not_punk_b1 <- punk_avg[-c(9,11),]
 
 
 not_punk_bar <-  ggplot(data = not_punk_b1, aes(x = Attribute, y = Average)) +
-  geom_bar(stat = 'identity', fill = 'darkred', color = 'black') +
+  geom_bar(stat = 'identity', fill = 'springgreen3', color = 'black') +
   theme_minimal() +
-  labs(title = 'Not Punk Genre Profile 1') 
+  labs(title = 'Not Punk Genre Profile 1')  +
+  dark_theme_grey() +
+  theme(axis.line.x = element_line(color="springgreen3"), 
+  axis.line.y = element_line(color="springgreen3"))
 
 not_punk_bar
   
 not_punk_b2 <-  punk_avg[c(9,11),]
 
 not_punk_bar2 <-  ggplot(data = not_punk_b2, aes(x = Attribute, y = Average)) +
-  geom_bar(stat = 'identity', fill = 'darkred', color = 'black') +
+  geom_bar(stat = 'identity', fill = 'springgreen3', color = 'black') +
   theme_minimal() +
-  labs(title = 'Not Punk Genre Profile 2') 
+  labs(title = 'Not Punk Genre Profile 2') +
+  dark_theme_grey() +
+  theme(axis.line.x = element_line(color="springgreen3"), 
+  axis.line.y = element_line(color="springgreen3"))
 
 not_punk_bar2
 ```
